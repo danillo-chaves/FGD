@@ -1,4 +1,5 @@
 using UnityEngine;
+using TMPro;
 
 public class PlayerController : MonoBehaviour
 {
@@ -8,7 +9,8 @@ public class PlayerController : MonoBehaviour
     public float moveSpeed = 3f; 
     private float horizontalInput;
     public Transform heroiT;
-
+    private int coinCount;
+    public TMP_Text textCoins;
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -20,12 +22,12 @@ public class PlayerController : MonoBehaviour
 
         // Movimento horizontal
         horizontalInput = Input.GetAxis("Horizontal"); // -1 para esquerda, 1 para direita
-        rb.velocity = new Vector2(horizontalInput * moveSpeed, rb.velocity.y);
+        rb.linearVelocity = new Vector2(horizontalInput * moveSpeed, rb.linearVelocity.y);
 
         // Pulo
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            rb.velocity = new Vector2(rb.velocity.x, jumpForce);
+            rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
             animator.SetTrigger("pular"); // Ativa a animação de pulo
         }
 
@@ -58,4 +60,21 @@ public class PlayerController : MonoBehaviour
         scala.x *= -1;
         heroiT.localScale = scala;
     }
+    void OnTriggerEnter2D(Collider2D col)
+    {
+        // Se o objeto colidido for a moeda
+        if (col.CompareTag("moeda"))
+        {
+            // Aumenta o contador de moedas
+            coinCount++;
+            textCoins.text = "Moedas coletadas: " + coinCount;
+            Debug.Log("Moedas coletadas: " + coinCount);
+
+            // Destroi a moeda
+            Destroy(col.gameObject);
+        }
+        
+    }
+    
+
 }
